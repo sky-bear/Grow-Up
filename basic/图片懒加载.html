@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+    <style>
+      html,
+      body {
+        width: 100%;
+        height: 100%;
+      }
+      section {
+        width: 80%;
+        margin: auto;
+        display: flex;
+        /* justify-content: space-around; */
+        flex-wrap: wrap;
+      }
+      .box {
+        width: 40%;
+        height: 200px;
+        border: 1px solid #e8e8e8;
+        box-sizing: border-box;
+        margin-bottom: 50px;
+      }
+      .box:nth-child(2n + 1) {
+        margin-right: 20%;
+      }
+    </style>
+  </head>
+  <body>
+    <section>
+      <div class="box"></div>
+      <div class="box"></div>
+      <div class="box"></div>
+      <div class="box"></div>
+      <div class="box"></div>
+      <div class="box"></div>
+      <div class="box"></div>
+      <div class="box"></div>
+      <div class="box"></div>
+      <div class="box"></div>
+      <div class="box"></div>
+    </section>
+    <script>
+      function rgb() {
+        //rgb颜色随机
+        var r = Math.floor(Math.random() * 255);
+        var g = Math.floor(Math.random() * 255);
+        var b = Math.floor(Math.random() * 255);
+        var rgb = "rgb(" + r + "," + g + "," + b + ")";
+        return rgb;
+      }
+
+      const box = document.querySelectorAll(".box");
+      const num = box.length;
+
+      // const lazyLoad = (function(box) {
+      //   let count = 0;
+      //   box.forEach(item => {
+      //     let dom = item.getBoundingClientRect();
+      //     if (dom.top < window.innerHeight) {
+      //       item.style.backgroundColor = rgb();
+      //       count += 1;
+      //     }
+      //   });
+      //   let boxList = [...box].slice(count);
+      //   return function() {
+      //     let deleteIndexList = [];
+      //     boxList.forEach((item, index) => {
+      //       let dom = item.getBoundingClientRect();
+      //       if (dom.top < window.innerHeight) {
+      //         item.style.backgroundColor = rgb();
+      //         count += 1;
+      //         deleteIndexList.push(index);
+      //         if (count === num) {
+      //           window.removeEventListener("scroll", lazyLoad);
+      //         }
+      //       }
+      //     });
+      //     boxList = boxList.filter(
+      //       (_, index) => !deleteIndexList.includes(index)
+      //     );
+      //   };
+      // })(box);
+      // window.addEventListener("scroll", lazyLoad);
+
+      // IntersectionObserver
+      const options = {
+        root: null,
+        // threshold: [0, 0.5, 1],
+        rootMargin: "-200px -200px" // 控制root元素的宽度和高度
+      };
+      const io = new IntersectionObserver(callBack, options);
+
+      // 添加监听
+      box.forEach(item => io.observe(item));
+
+      function callBack(entries) {
+        console.log(entries);
+        // boundingClientRect 目标元素的矩形信息
+        // intersectionRatio 相交区域和目标元素的比例值 intersectionRect/boundingClientRect 不可见时小于等于0
+        // intersectionRect 目标元素和视窗（根）相交的矩形信息 可以称为相交区域
+        // isIntersecting 目标元素当前是否可见 Boolean值 可见为true
+        // rootBounds 根元素的矩形信息，没有指定根元素就是当前视窗的矩形信息
+        // target 观察的目标元素
+        // time 返回一个记录从IntersectionObserver的时间到交叉被触发的时间的时间戳
+        entries.forEach(item => {
+          if (item.intersectionRatio) {
+            item.target.style.backgroundColor = rgb();
+            io.unobserve(item.target); // 停止观察当前元素 避免不可见时候再次调用callback函数
+          }
+        });
+      }
+    </script>
+  </body>
+</html>

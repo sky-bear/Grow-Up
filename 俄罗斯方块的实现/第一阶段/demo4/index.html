@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>webssocket</title>
+  </head>
+  <body>
+    <h3>webssocket</h3>
+    <input type="text" />
+    <div class="connect">未连接</div>
+    <button>发送</button>
+    <script>
+      function showMessage({ data, type, name }) {
+        let str = data;
+        const div = document.createElement("div");
+        if (type === "enter") {
+          div.style.color = "blue";
+        }
+        if (type === "left") {
+          div.style.color = "red";
+        }
+        if (name) {
+          str = `${name}: ${data}`;
+        }
+        div.innerHTML = str;
+        document.body.appendChild(div);
+      }
+      const websocket = new WebSocket("ws://localhost:9000");
+      websocket.onopen = function() {
+        document.querySelector("div").innerHTML = "连接上了";
+        document.querySelector("button").onclick = function() {
+          const value = document.querySelector("input").value;
+          if (value) {
+            websocket.send(value);
+          }
+        };
+      };
+      websocket.onclose = function() {
+        console.log("关闭了");
+      };
+      websocket.onmessage = function(e) {
+        console.log(e);
+        showMessage(JSON.parse(e.data));
+      };
+    </script>
+  </body>
+</html>

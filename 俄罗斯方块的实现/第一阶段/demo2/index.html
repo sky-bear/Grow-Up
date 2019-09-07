@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>webssocket</title>
+  </head>
+  <body>
+    <h3>webssocket</h3>
+    <input type="text" />
+    <div>未连接</div>
+    <button>发送</button>
+    <script>
+      const websocket = new WebSocket("ws://localhost:9000");
+      websocket.onopen = function() {
+        document.querySelector("div").innerHTML = "连接上了";
+      };
+      websocket.onclose = function() {
+        console.log("关闭了");
+      };
+      websocket.onmessage = function(e) {
+        console.log(e);
+        document.querySelector("div").innerHTML = e.data;
+      };
+      document.querySelector("button").onclick = function() {
+        const value = document.querySelector("input").value;
+        websocket.send(value);
+      };
+    </script>
+  </body>
+</html>

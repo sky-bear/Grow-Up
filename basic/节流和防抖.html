@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div>
+      <button>加1</button>
+      <button>加2</button>
+      <button>移除</button>
+    </div>
+    <div>
+      <p>未处理： <input type="text" /></p>
+      <p>防抖处理： <input type="text" /></p>
+      <p>节流处理： <input type="text" /></p>
+    </div>
+  </body>
+  <script>
+    const button = document.querySelectorAll("button");
+    const add = function(e) {
+      console.log(this);
+      console.log(e);
+    };
+    const debounce = (
+      fn,
+      time = 1000,
+      options = { leading: true, context: null }
+    ) => {
+      let timer;
+      const _debounce = function() {
+        if (timer) {
+          clearTimeout(timer);
+        }
+        if (options.leading && !timer) {
+          timer = setTimeout(null, time);
+          fn.apply(options.context, arguments);
+        } else {
+          timer = setTimeout(() => {
+            fn.apply(options.context, arguments);
+
+            timer = null;
+          }, time);
+        }
+      };
+      return _debounce;
+    };
+
+    // const debounce = (fn, time = 1000, options = { leading: true }) => {
+    //   let timer;
+    //   const _debounce = function() {
+    //     const that = this;
+    //     if (timer) {
+    //       clearTimeout(timer);
+    //     }
+    //     if (options.leading && !timer) {
+    //       timer = setTimeout(null, time);
+    //       fn.apply(that, arguments);
+    //     } else {
+    //       timer = setTimeout(() => {
+    //         fn.apply(that, arguments);
+    //         timer = null;
+    //       }, time);
+    //     }
+    //   };
+    //   return _debounce;
+    // };
+    button[0].addEventListener("click", add);
+    const add_1 = debounce(add);
+    button[1].addEventListener("click", add_1);
+    button[2].addEventListener("click", () => {
+      button[0].removeEventListener("click", add);
+      button[1].removeEventListener("click", add_1);
+    });
+
+    //  节流
+    const throttle = (fn, time = 1000, options = { leading: true }) => {
+      let last, timer;
+      const _throttle = function() {
+        const that = this;
+        let now = +new Date();
+        if (last && now < last + time) {
+          if (timer) return;
+          timer = setTimeout(() => {
+            clearTimeout(timer);
+            last = now;
+            fn.apply(that, arguments);
+          }, time);
+        } else {
+          last = now;
+          fn.apply(that, arguments);
+        }
+      };
+      return _throttle;
+    };
+    const input = document.querySelectorAll("input");
+    input[0].addEventListener("input", add);
+    const add_2 = debounce(add);
+    const add_3 = throttle(add);
+
+    input[1].addEventListener("input", add_2);
+    input[2].addEventListener("input", add_3);
+  </script>
+</html>

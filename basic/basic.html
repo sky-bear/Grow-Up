@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>basic</title>
+  </head>
+  <body>
+    <script>
+      // this指向
+      const o1 = {
+        text: "o1",
+        fn: function() {
+          return this.text;
+        }
+      };
+      const o2 = {
+        text: "o2",
+        fn: function() {
+          return o1.fn.call(this);
+        }
+      };
+      console.log(o2.fn());
+
+      // 通过bind预制函数参数
+      function addArguments(arg1, arg2) {
+        return arg1 + arg2;
+      }
+      let add = addArguments.bind(null, 30);
+      const result_1 = add(5);
+      const result_2 = add(5, 10);
+      console.log(result_1, result_2);
+
+      // 利用apply
+      Function.prototype.bind =
+        Function.prototype.bind ||
+        function(content) {
+          const that = this;
+          const args = [].slice.call(arguments, 1);
+          return function bound() {
+            const finallyArgs = [...args, ...arguments];
+            return that.apply(content, finallyArgs);
+          };
+        };
+      // 不利用apply
+      Function.prototype.bind =
+        Function.prototype.bind ||
+        function(content) {
+          const args = [].slice.call(arguments, 1);
+          content.fn = this;
+          return function bound() {
+            const finallyArgs = [...args, ...arguments];
+            const result = content.fn(...finallyArgs);
+            delete content.fn;
+            return result;
+          };
+        };
+    </script>
+  </body>
+</html>

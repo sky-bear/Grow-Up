@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>webssocket</title>
+    <script src="./scket.io.js"></script>
+  </head>
+  <body>
+    <h3>webssocket</h3>
+    <input type="text" />
+    <button>发送</button>
+    <script>
+      function showMessage({ data, type, name }) {
+        let str = data;
+        const div = document.createElement("div");
+        if (type === "enter") {
+          div.style.color = "blue";
+        }
+        if (type === "left") {
+          div.style.color = "red";
+        }
+        if (name) {
+          str = `${name}: ${data}`;
+        }
+        div.innerHTML = str;
+        document.body.appendChild(div);
+      }
+
+      const websocket = io("ws://localhost:9000");
+
+      document.querySelector("button").onclick = function() {
+        const value = document.querySelector("input").value;
+        if (value) {
+          websocket.emit("message", value);
+        }
+      };
+
+      websocket.onclose = function() {
+        console.log("关闭了");
+      };
+      websocket.on("message", function(data) {
+        showMessage(data);
+      });
+    </script>
+  </body>
+</html>
